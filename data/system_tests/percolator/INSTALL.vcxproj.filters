@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\code\library\percolator\CMakeFiles\a8c5d6d1806ab234f5ccff88f9df39d4\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{403B5D18-EE79-306D-A8CA-8EFE0A6D2CD2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
