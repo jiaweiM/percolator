@@ -18,43 +18,43 @@
 #include "FeatureMemoryPool.h"
 
 void FeatureMemoryPool::createPool(size_t numFeatures) {
-  numFeatures_ = numFeatures;
-  numRowsPerBlock_ = kBlockSize / numFeatures_;
-  isInitialized_ = true;
+	numFeatures_ = numFeatures;
+	numRowsPerBlock_ = kBlockSize / numFeatures_;
+	isInitialized_ = true;
 }
 
 void FeatureMemoryPool::createNewBlock() {
-  double* memStart = new double[numFeatures_ * numRowsPerBlock_]();
-  memStarts_.push_back(memStart);
+	double* memStart = new double[numFeatures_ * numRowsPerBlock_]();
+	memStarts_.push_back(memStart);
 }
 
 void FeatureMemoryPool::destroyPool() {
-  for (size_t i = 0; i < memStarts_.size(); ++i) {
-    if (memStarts_.at(i) != NULL) {
-      delete[] memStarts_.at(i);
-      memStarts_.at(i) = NULL;
-    }
-  }
-  isInitialized_ = false;
+	for (size_t i = 0; i < memStarts_.size(); ++i) {
+		if (memStarts_.at(i) != NULL) {
+			delete[] memStarts_.at(i);
+			memStarts_.at(i) = NULL;
+		}
+	}
+	isInitialized_ = false;
 }
 
 double* FeatureMemoryPool::addressFromIdx(unsigned int i) const {
-  return memStarts_.at(i / numRowsPerBlock_) + (i % numRowsPerBlock_) * numFeatures_;
+	return memStarts_.at(i / numRowsPerBlock_) + (i % numRowsPerBlock_) * numFeatures_;
 }
 
 double* FeatureMemoryPool::allocate() {
-  if (freeRows_.size() == 0) {
-    if (initializedRows_ >= numRowsPerBlock_ * memStarts_.size()) {
-      createNewBlock();
-    }
-    freeRows_.push_back(addressFromIdx(initializedRows_));
-    initializedRows_++;
-  }
-  double* ret = freeRows_.back();
-  freeRows_.pop_back();
-  return ret;
+	if (freeRows_.size() == 0) {
+		if (initializedRows_ >= numRowsPerBlock_ * memStarts_.size()) {
+			createNewBlock();
+		}
+		freeRows_.push_back(addressFromIdx(initializedRows_));
+		initializedRows_++;
+	}
+	double* ret = freeRows_.back();
+	freeRows_.pop_back();
+	return ret;
 }
 
 void FeatureMemoryPool::deallocate(double* p) {
-  freeRows_.push_back(p);
+	freeRows_.push_back(p);
 }

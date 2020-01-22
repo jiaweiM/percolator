@@ -80,6 +80,7 @@ void Enzyme::setEnzyme(EnzymeType enz) {
   }
 }
 
+
 void Enzyme::setEnzyme(std::string enzyme) {
   destroy();
   

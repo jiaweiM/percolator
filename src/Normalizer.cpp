@@ -28,47 +28,63 @@ using namespace std;
 int Normalizer::subclass_type = STDV;
 Normalizer* Normalizer::theNormalizer = NULL;
 
-Normalizer::Normalizer() {
+Normalizer::Normalizer() {}
+
+Normalizer::~Normalizer() {}
+
+// 正则化数据集
+// @param featuresV feature 数据
+// @param rtFeaturesV RT 相关的 feature 数据
+void Normalizer::normalizeSet(vector<double*>& featuresV, vector<double*>& rtFeaturesV) {
+
+	normalizeSet(featuresV, 0, numFeatures);
+	normalizeSet(rtFeaturesV, numFeatures, numRetentionFeatures);
 }
 
-Normalizer::~Normalizer() {
+// 正则化数据集
+// @param featuresV feature 数据集
+// @param offset 索引 offset，为RT设计，因为它们一般放在最后
+// @param numFeatures 待正则化的 feature 数
+void Normalizer::normalizeSet(vector<double*>& featuresV, size_t offset, size_t numFeatures) {
+
+	double* features;
+	vector<double*>::iterator it = featuresV.begin();
+	for (; it != featuresV.end(); ++it) {
+		features = *it;
+		normalize(features, features, offset, numFeatures);
+	}
 }
 
-void Normalizer::normalizeSet(vector<double*>& featuresV,
-                              vector<double*>& rtFeaturesV) {
-  normalizeSet(featuresV, 0, numFeatures);
-  normalizeSet(rtFeaturesV, numFeatures, numRetentionFeatures);
+// normalize feature
+// @param in 输入
+// @param out 输出
+// @param offset index offset
+// @param numFeatures number of features
+void Normalizer::normalize(const double* in, double* out,
+	size_t offset, size_t numFeatures) {
+
+	for (unsigned int ix = 0; ix < numFeatures; ++ix) {
+		out[ix] = (in[ix] - sub[offset + ix]) / div[offset + ix];
+	}
 }
 
-void Normalizer::normalizeSet(vector<double*>& featuresV,
-                              size_t offset, size_t numFeatures) {
-  double* features;
-  vector<double*>::iterator it = featuresV.begin();
-  for (; it != featuresV.end(); ++it) {
-    features = *it;
-    normalize(features, features, offset, numFeatures);
-  }
-}
-
-void Normalizer::normalize(const double* in, double* out, size_t offset,
-                           size_t numFeatures) {
-  for (unsigned int ix = 0; ix < numFeatures; ++ix) {
-    out[ix] = (in[ix] - sub[offset + ix]) / div[offset + ix];
-  }
-}
-
+// 获得 Normalizer 实例
+// Percolator 提供了两种正则化方法，一般使用标准偏差方法，即使每个特征的均值为0，方差为1。
 Normalizer* Normalizer::getNormalizer() {
-  if (theNormalizer == NULL) {
-    if (subclass_type == UNI) {
-      theNormalizer = new UniNormalizer();
-    } else {
-      theNormalizer = new StdvNormalizer();
-    }
-  }
-  return theNormalizer;
+	if (theNormalizer == NULL) {
+		if (subclass_type == UNI) {
+			theNormalizer = new UniNormalizer();
+		}
+		else {
+			theNormalizer = new StdvNormalizer();
+		}
+	}
+	return theNormalizer;
 }
 
+// 设置正则化方法
+// @param type 类型，0 -> UNI, 1 -> STDV
 void Normalizer::setType(int type) {
-  assert(type == UNI || type == STDV);
-  subclass_type = type;
+	assert(type == UNI || type == STDV);
+	subclass_type = type;
 }

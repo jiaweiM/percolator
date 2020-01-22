@@ -24,65 +24,68 @@ using namespace std;
 
 
 class DescriptionOfCorrect {
-  public:
-    DescriptionOfCorrect();
-    virtual ~DescriptionOfCorrect();
-    double getAvgDeltaMass() {
-      return avgDM;
-    }
-    double getAvgPI() {
-      return avgPI;
-    }
-    static void calcRegressionFeature(PSMDescription* psm);
-    static double isoElectricPoint(const string& peptide);
-    static void setKlammer(bool on) {
-      RTModel::setDoKlammer(on);
-    }
-    static void setDocType(const unsigned int dt) {
-      docFeatures = dt;
-    }
-    void clear() {
-      psms.clear();
-    }
-    void registerCorrect(PSMDescription* psm) {
-      psms.push_back(psm);
-    }
-    void trainCorrect();
-    void setFeatures(PSMDescription* psm);
-    void setFeaturesNormalized(PSMDescription* psm, Normalizer* pNorm);
-    //static size_t totalNumRTFeatures() {return (doKlammer?64:minimumNumRTFeatures() + 20);}
-    //static size_t minimumNumRTFeatures() {return 3*10+1+3;}
-    void print_10features();
-    svm_model* getModel() {
-      return rtModel.getModel();
-    }
-    size_t getRTFeat() {
-      return rtModel.getRTFeat();
-    }
-    static size_t numDOCFeatures() {
-      return 4;
-    }
-    void copyDOCparameters(DescriptionOfCorrect& other) {
-      //    avgPI = other.avgPI; avgDM = other.avgDM; rtW = other.rtW; numRTFeat = other.numRTFeat;
-      avgPI = other.avgPI;
-      avgDM = other.avgDM;
-      rtModel.copyModel(other.getModel());
-      rtModel.setNumRtFeat(other.getRTFeat());
-    }
-    double estimateRT(double* features) {
-      return rtModel.estimateRT(features);
-    }
 
-  protected:
-    double avgPI, avgDM;
-    std::vector<PSMDescription*> psms;
-    //  vector<double> rtW;
-    double c, gamma, epsilon;
-    RTModel rtModel;
-    static string isoAlphabet;
-    static float pKiso[7];
-    static float pKN, pKC;
-    static unsigned int docFeatures;
+public:
+	DescriptionOfCorrect();
+	virtual ~DescriptionOfCorrect();
+	double getAvgDeltaMass() {
+		return avgDM;
+	}
+	double getAvgPI() {
+		return avgPI;
+	}
+	static void calcRegressionFeature(PSMDescription* psm);
+	static double isoElectricPoint(const string& peptide);
+	// Retention time features are calculated as in Klammer et al. Only available if -D is set.
+	static void setKlammer(bool on) {
+		RTModel::setDoKlammer(on);
+	}
+	static void setDocType(const unsigned int dt) {
+		docFeatures = dt;
+	}
+	void clear() {
+		psms.clear();
+	}
+	void registerCorrect(PSMDescription* psm) {
+		psms.push_back(psm);
+	}
+	void trainCorrect();
+	void setFeatures(PSMDescription* psm);
+	void setFeaturesNormalized(PSMDescription* psm, Normalizer* pNorm);
+	//static size_t totalNumRTFeatures() {return (doKlammer?64:minimumNumRTFeatures() + 20);}
+	//static size_t minimumNumRTFeatures() {return 3*10+1+3;}
+	void print_10features();
+	svm_model* getModel() {
+		return rtModel.getModel();
+	}
+	size_t getRTFeat() {
+		return rtModel.getRTFeat();
+	}
+	// doc feature 数，4，即docpI, docdM, docRT, docdMdRT
+	static size_t numDOCFeatures() {
+		return 4;
+	}
+	void copyDOCparameters(DescriptionOfCorrect& other) {
+		//    avgPI = other.avgPI; avgDM = other.avgDM; rtW = other.rtW; numRTFeat = other.numRTFeat;
+		avgPI = other.avgPI;
+		avgDM = other.avgDM;
+		rtModel.copyModel(other.getModel());
+		rtModel.setNumRtFeat(other.getRTFeat());
+	}
+	double estimateRT(double* features) {
+		return rtModel.estimateRT(features);
+	}
+
+protected:
+	double avgPI, avgDM;
+	std::vector<PSMDescription*> psms;
+	//  vector<double> rtW;
+	double c, gamma, epsilon;
+	RTModel rtModel;
+	static string isoAlphabet;
+	static float pKiso[7];
+	static float pKN, pKC;
+	static unsigned int docFeatures;
 };
 
 #endif /*DESCRIPTIONOFCORRECT_H_*/

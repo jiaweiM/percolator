@@ -22,55 +22,58 @@
 #include "DescriptionOfCorrect.h"
 
 PSMDescription::PSMDescription() :
-    features(NULL), expMass(0.), calcMass(0.), scan(0),
-    id_(""), peptide("") {
+	features(NULL), expMass(0.), calcMass(0.), scan(0),
+	id_(""), peptide("") {
 }
 
 PSMDescription::PSMDescription(const std::string& pep) :
-    features(NULL), expMass(0.), calcMass(0.), scan(0),
-    id_(""), peptide(pep) {
+	features(NULL), expMass(0.), calcMass(0.), scan(0),
+	id_(""), peptide(pep) {
 }
 
 PSMDescription::~PSMDescription() {}
 
 void PSMDescription::deletePtr(PSMDescription* psm) {
-  if (psm != NULL) {
-    psm->deleteRetentionFeatures();
-    delete psm;
-    psm = NULL;
-  }
+	if (psm != NULL) {
+		psm->deleteRetentionFeatures();
+		delete psm;
+		psm = NULL;
+	}
 }
 
 bool PSMDescription::isNotEnzymatic() {
-  std::string peptideSeq = removePTMs(peptide);
-  std::string peptideSeqNoFlanks = removeFlanks(peptide);
-  return !(Enzyme::isEnzymatic(peptideSeq[0], peptideSeq[2])
-      && Enzyme::isEnzymatic(peptideSeq[peptideSeq.size() - 3],
-                             peptideSeq[peptideSeq.size() - 1])
-      && Enzyme::countEnzymatic(peptideSeqNoFlanks) == 0);
+
+	std::string peptideSeq = removePTMs(peptide);
+	std::string peptideSeqNoFlanks = removeFlanks(peptide);
+
+	return !(Enzyme::isEnzymatic(peptideSeq[0], peptideSeq[2])
+		&& Enzyme::isEnzymatic(peptideSeq[peptideSeq.size() - 3],
+			peptideSeq[peptideSeq.size() - 1])
+		&& Enzyme::countEnzymatic(peptideSeqNoFlanks) == 0);
 }
 
 std::string PSMDescription::removePTMs(const string& peptide) {
-  std::string peptideSequence = peptide;
-  peptideSequence = peptide.substr(2, peptide.size()- 4);
-  for (unsigned int ix = 0; ix < peptideSequence.size(); ++ix) {
-    if (peptideSequence[ix] == '[') {
-      size_t posEnd = peptideSequence.substr(ix).find_first_of(']');
-      if (posEnd == string::npos) {
-        ostringstream temp;
-        temp << "Error : Peptide sequence " << peptide << " contains an invalid modification" << endl;
-        throw MyException(temp.str());
-      } else {
-        peptideSequence.erase(ix--, posEnd + 1);
-      }
-    }
-  }
-  return peptide.substr(0,1) + std::string(".") + peptideSequence + std::string(".") + peptide.substr(peptide.size() - 1,1);
+	std::string peptideSequence = peptide;
+	peptideSequence = peptide.substr(2, peptide.size() - 4);
+	for (unsigned int ix = 0; ix < peptideSequence.size(); ++ix) {
+		if (peptideSequence[ix] == '[') {
+			size_t posEnd = peptideSequence.substr(ix).find_first_of(']');
+			if (posEnd == string::npos) {
+				ostringstream temp;
+				temp << "Error : Peptide sequence " << peptide << " contains an invalid modification" << endl;
+				throw MyException(temp.str());
+			}
+			else {
+				peptideSequence.erase(ix--, posEnd + 1);
+			}
+		}
+	}
+	return peptide.substr(0, 1) + std::string(".") + peptideSequence + std::string(".") + peptide.substr(peptide.size() - 1, 1);
 }
 
 void PSMDescription::printProteins(std::ostream& out) {
-  std::vector<std::string>::const_iterator it = proteinIds.begin();
-  for ( ; it != proteinIds.end(); ++it) {
-    out << '\t' << *it;
-  }
+	std::vector<std::string>::const_iterator it = proteinIds.begin();
+	for (; it != proteinIds.end(); ++it) {
+		out << '\t' << *it;
+	}
 }

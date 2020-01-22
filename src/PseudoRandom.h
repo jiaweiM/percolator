@@ -29,6 +29,7 @@
 */
 class PseudoRandom {
  public:
+  // Set seed of the random number generator. Default = 1
   inline static void setSeed(unsigned long s) { seed_ = s; }
   static unsigned long lcg_rand();
   const static uint64_t kRandMax = 4294967291u;

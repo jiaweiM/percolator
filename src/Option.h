@@ -72,6 +72,7 @@ class CommandLineParser {
     return (options[dest].length() > 0);
   }
   double getDouble(std::string dest, double lower, double upper);
+  // 返回在指定范围内的整数参数值
   int getInt(std::string dest, int lower, int upper);
   void help();
   void htmlHelp();

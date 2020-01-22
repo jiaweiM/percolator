@@ -22,58 +22,57 @@
 
 class ParseOptions
 {
-  
- public:
-    ParseOptions(): calcQuadraticFeatures(false),
-    calcAAFrequencies(false),
-    calcPTMs(false),
-    calcDOC(false),
-    isotopeMass(false),
-    hitsPerSpectrum(1),
-    peptidelength(6),
-    pngasef(false),
-    iscombined(false),
-    monoisotopic(false),
-    boost_serialization(true),
-    reversedFeaturePattern("random"),
-    targetFN(""),
-    decoyFN(""),
-    spectrumFN(""),
-    call(""),
-    xmlOutputFN(""),
-    minmass(400),
-    maxmass(6000),
-    maxpeplength(40),
-    missed_cleavages(0),
-    targetDb(""),
-    decoyDb(""),
-    readProteins(false)
-    {};
-    bool calcQuadraticFeatures;
-    bool calcAAFrequencies;
-    bool calcPTMs;
-    bool calcDOC;
-    bool isotopeMass;
-    int hitsPerSpectrum;
-    unsigned peptidelength;
-    bool pngasef;
-    bool iscombined;
-    bool monoisotopic;
-    bool boost_serialization;
-    std::string reversedFeaturePattern;
-    std::string targetFN;
-    std::string decoyFN;
-    std::string spectrumFN;
-    std::string call;
-    std::string xmlOutputFN;
-    std::map<char, int> ptmScheme;
-    double minmass;
-    double maxmass;
-    unsigned maxpeplength;
-    unsigned missed_cleavages;
-    std::string targetDb;
-    std::string decoyDb;
-    bool readProteins;
+public:
+	ParseOptions() : calcQuadraticFeatures(false),
+		calcAAFrequencies(false),
+		calcPTMs(false),
+		calcDOC(false),
+		isotopeMass(false),
+		hitsPerSpectrum(1),
+		peptidelength(6),
+		pngasef(false),
+		iscombined(false),
+		monoisotopic(false),
+		boost_serialization(true),
+		reversedFeaturePattern("random"),
+		targetFN(""),
+		decoyFN(""),
+		spectrumFN(""),
+		call(""),
+		xmlOutputFN(""),
+		minmass(400),
+		maxmass(6000),
+		maxpeplength(40),
+		missed_cleavages(0),
+		targetDb(""),
+		decoyDb(""),
+		readProteins(false)
+	{};
+	bool calcQuadraticFeatures;
+	bool calcAAFrequencies;
+	bool calcPTMs;
+	bool calcDOC;
+	bool isotopeMass;
+	int hitsPerSpectrum;
+	unsigned peptidelength;
+	bool pngasef;
+	bool iscombined;
+	bool monoisotopic;
+	bool boost_serialization;
+	std::string reversedFeaturePattern;
+	std::string targetFN;
+	std::string decoyFN;
+	std::string spectrumFN;
+	std::string call;
+	std::string xmlOutputFN;
+	std::map<char, int> ptmScheme;
+	double minmass;
+	double maxmass;
+	unsigned maxpeplength;
+	unsigned missed_cleavages;
+	std::string targetDb;
+	std::string decoyDb;
+	bool readProteins;
 };
 
 #endif // PARSEOPTIONS_H

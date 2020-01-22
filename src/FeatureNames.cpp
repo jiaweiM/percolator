@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  Copyright 2006-2012 Lukas Käll <lukas.kall@scilifelab.se>
 
@@ -22,70 +21,81 @@
 size_t FeatureNames::numFeatures = 0;
 
 FeatureNames::FeatureNames() {
-  minCharge = 100;
-  maxCharge = -1;
-  chargeFeatNum = -1;
-  enzFeatNum = -1;
-  numSPFeatNum = -1;
-  ptmFeatNum = -1;
-  intraSetFeatNum = -1;
-  quadraticFeatNum = -1;
-  docFeatNum = -1;
+	minCharge = 100;
+	maxCharge = -1;
+	chargeFeatNum = -1;
+	enzFeatNum = -1;
+	numSPFeatNum = -1;
+	ptmFeatNum = -1;
+	intraSetFeatNum = -1;
+	quadraticFeatNum = -1;
+	docFeatNum = -1;
 }
 
-FeatureNames::~FeatureNames() {
-}
+FeatureNames::~FeatureNames() {}
 
+// 初始化 features，即考虑是否加入 calcDOc 所需的 features
+// @param calcDOC 是否计算DOC
 void FeatureNames::initFeatures(bool calcDOC) {
-  if (calcDOC) {
-    docFeatNum = featureNames.size();
-    featureNames.push_back("docpI");
-    featureNames.push_back("docdM");
-    featureNames.push_back("docRT");
-    featureNames.push_back("docdMdRT");
-  }
-  setNumFeatures(featureNames.size());
-  if (VERB>2) {
-    std::cerr << "in FeatureNames::initFeatures\n";
-  }
-  if (VERB>1) {
-    std::cerr << "Features:\n";
-    std::copy( featureNames.begin(), featureNames.end(),
-        std::ostream_iterator<std::string>(std::cerr, " "));
-    std::cerr << "\n";
-  }
-  if (VERB>2) {
-    std::cerr << "end of FeatureNames::initFeatures\n";
-  }
+	if (calcDOC) {
+		docFeatNum = featureNames.size();
+		featureNames.push_back("docpI");
+		featureNames.push_back("docdM");
+		featureNames.push_back("docRT");
+		featureNames.push_back("docdMdRT");
+	}
+	setNumFeatures(featureNames.size());
+	if (VERB > 2) {
+		std::cerr << "in FeatureNames::initFeatures\n";
+	}
+	if (VERB > 1) {
+		std::cerr << "Features:\n";
+		std::copy(featureNames.begin(), featureNames.end(),
+			std::ostream_iterator<std::string>(std::cerr, " "));
+		std::cerr << "\n";
+	}
+	if (VERB > 2) {
+		std::cerr << "end of FeatureNames::initFeatures\n";
+	}
 }
 
+/// <summary>
+///
+/// </summary>
+/// <param name="skipDOC"></param>
+/// <returns></returns>
 string FeatureNames::getFeatureNames(bool skipDOC) {
-  int n = (skipDOC && docFeatNum > 0) ? docFeatNum
-      : (int)featureNames.size();
-  ostringstream oss;
-  if (!featureNames.empty()) {
-    int featNum = 0;
-    oss << featureNames[featNum++];
-    for (; featNum < n; ++featNum) {
-      oss << "\t" << featureNames[featNum];
-    }
-  }
-  return oss.str();
+	int n = (skipDOC && docFeatNum > 0) ? docFeatNum
+		: (int)featureNames.size();
+	ostringstream oss;
+	if (!featureNames.empty()) {
+		int featNum = 0;
+		oss << featureNames[featNum++];
+		for (; featNum < n; ++featNum) {
+			oss << "\t" << featureNames[featNum];
+		}
+	}
+	return oss.str();
 }
 
+/// <summary>
+///
+/// </summary>
+/// <param name="featureName"></param>
+/// <returns></returns>
 int FeatureNames::getFeatureNumber(const string& featureName) {
-  for (unsigned int fnum = 0; fnum < featureNames.size(); ++fnum) {
-    // there is no easy case insensitive string compare in c++, so go by char
-    if (featureNames[fnum].size() == featureName.size()) {
-      bool isEqual = true;
-      for (unsigned int i = 0; i < featureName.size(); ++i) {
-        if (std::tolower(featureName[i]) != std::tolower(featureNames[fnum][i])) {
-          isEqual = false;
-          break;
-        }
-      }
-      if (isEqual) return fnum + 1;
-    } 
-  }
-  return 0;
+	for (unsigned int fnum = 0; fnum < featureNames.size(); ++fnum) {
+		// there is no easy case insensitive string compare in c++, so go by char
+		if (featureNames[fnum].size() == featureName.size()) {
+			bool isEqual = true;
+			for (unsigned int i = 0; i < featureName.size(); ++i) {
+				if (std::tolower(featureName[i]) != std::tolower(featureNames[fnum][i])) {
+					isEqual = false;
+					break;
+				}
+			}
+			if (isEqual) return fnum + 1;
+		}
+	}
+	return 0;
 }

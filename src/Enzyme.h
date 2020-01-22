@@ -38,6 +38,7 @@ class Enzyme {
     
     static Enzyme* getEnzyme();
     static void setEnzyme(EnzymeType enz);
+    // // Type of enzyme "no_enzyme", "elastase", "pepsin", "proteinasek", "thermolysin", "trypsinp", "chymotrypsin", "lys-n", "lys-c", "arg-c", "asp-n", "glu-c", "trypsin". Default="trypsin".
     static void setEnzyme(std::string enzyme);
     static EnzymeType getEnzymeType() {
       return getEnzyme()->getET();

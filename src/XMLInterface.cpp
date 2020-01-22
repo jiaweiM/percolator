@@ -18,6 +18,7 @@
 #include "XMLInterface.h"
 #include "Version.h"
 
+
 #ifdef XML_SUPPORT
 
 /** some constant strings to be used to compare xml strings **/

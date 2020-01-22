@@ -38,135 +38,153 @@
 #include "FeatureMemoryPool.h"
 #include "ProteinProbEstimator.h"
 
-// using char pointers is much faster than istringstream
+ // using char pointers is much faster than istringstream
 class TabReader {
- public:
-  TabReader(const std::string& line) : f_(line.c_str()), err(0) {
-    errno = 0;
-  }
-  
-  void advance(const char* next) {
-    if (*next != '\0') {
-      f_ = next + 1; // eats up the tab
-    } else {
-      f_ = next; // prevents pointing over the null byte
-    }
-  }
-  
-  void skip() {
-    const char* pch = strchr(f_, '\t');
-    if (pch == NULL) {
-      err = 1;
-    } else {
-      err = errno;
-      advance(pch);
-    }
-  }
-  
-  void skip(size_t numSkip) {
-    for (size_t i = 0; i < numSkip; ++i) skip();
-  }
-  
-  double readDouble() {
-    char* next = NULL;
-    double d = strtod(f_, &next);
-    if (next == f_) {
-      err = 1;
-    } else {
-      err = errno;
-    }
-    advance(next);
-    return d;
-  }
-  
-  int readInt() {
-    char* next = NULL;
-    int i = strtol(f_, &next, 10);
-    if (next == f_) {
-      err = 1;
-    } else {
-      err = errno;
-    }
-    advance(next);
-    return i;
-  }
-  
-  std::string readString() {
-    const char* pch = strchr(f_, '\t');
-    if (pch == NULL) {
-      err = 1;
-      return std::string(f_);
-    } else {
-      err = errno;
-      std::string s(f_, pch - f_);
-      advance(pch);
-      return s;
-    }
-  }
-  
-  bool error() { return err != 0; }
- private:
-  const char* f_;
-  int err;
+public:
+	TabReader(const std::string& line) : f_(line.c_str()), err(0) {
+		errno = 0;
+	}
+
+	void advance(const char* next) {
+		if (*next != '\0') {
+			f_ = next + 1; // eats up the tab
+		}
+		else {
+			f_ = next; // prevents pointing over the null byte
+		}
+	}
+
+	void skip() {
+		const char* pch = strchr(f_, '\t');
+		if (pch == NULL) {
+			err = 1;
+		}
+		else {
+			err = errno;
+			advance(pch);
+		}
+	}
+
+	void skip(size_t numSkip) {
+		for (size_t i = 0; i < numSkip; ++i) skip();
+	}
+
+	double readDouble() {
+		char* next = NULL;
+		double d = strtod(f_, &next);
+		if (next == f_) {
+			err = 1;
+		}
+		else {
+			err = errno;
+		}
+		advance(next);
+		return d;
+	}
+
+	int readInt() {
+		char* next = NULL;
+		int i = strtol(f_, &next, 10);
+		if (next == f_) {
+			err = 1;
+		}
+		else {
+			err = errno;
+		}
+		advance(next);
+		return i;
+	}
+
+	std::string readString() {
+		const char* pch = strchr(f_, '\t');
+		if (pch == NULL) {
+			err = 1;
+			return std::string(f_);
+		}
+		else {
+			err = errno;
+			std::string s(f_, pch - f_);
+			advance(pch);
+			return s;
+		}
+	}
+
+	bool error() { return err != 0; }
+private:
+	const char* f_;
+	int err;
 };
 
 
 // Optional columns in tab delimited input
 enum OptionalField {
-  SCANNR, EXPMASS, CALCMASS, RETTIME, DELTAMASS
+	SCANNR, EXPMASS, CALCMASS, RETTIME, DELTAMASS
 };
 
 class DataSet {
- public:
-  DataSet();
-  virtual ~DataSet();
-  
-  void initFeatureTables(const unsigned int numFeatures);
-  
-  void inline setLabel(int l) { label_ = l; }
-  int inline getLabel() const { return label_; }
-  
-  unsigned int inline getSize() const { return psms_.size(); }
-  
-  static inline void setCalcDoc(bool on) { calcDOC_ = on; }
-  static inline bool getCalcDoc() { return calcDOC_; }
-  
-  static FeatureNames& getFeatureNames() { return featureNames_; }
-  static void resetFeatureNames() { 
-    featureNames_ = FeatureNames();
-    FeatureNames::resetNumFeatures();
-  }
-  static unsigned getNumFeatures() { return featureNames_.getNumFeatures(); }
-  
-  void setRetentionTime(map<int, double>& scan2rt) { 
-    PSMDescriptionDOC::setRetentionTime(psms_, scan2rt);
-  }
-  
-  bool writeTabData(std::ofstream& out);
-  
-  void print_10features();
-  void print_features();
+public:
+	DataSet();
+	virtual ~DataSet();
 
-  void fillFeatures(std::vector<ScoreHolder>& scores);
-  void fillFeatures(std::vector<double*>& features);
-  void fillDOCFeatures(std::vector<double*>& features);
-  void fillRtFeatures(std::vector<double*>& rtFeatures);
-  
-  void readPsm(const std::string& line, const unsigned int lineNr,
-               const std::vector<OptionalField>& optionalFields, 
-               FeatureMemoryPool& featurePool);
-  static int readPsm(const std::string& line, const unsigned int lineNr,
-    const std::vector<OptionalField>& optionalFields, bool readProteins,
-    PSMDescription*& myPsm, FeatureMemoryPool& featurePool);
-  
-  void registerPsm(PSMDescription* myPsm);
-  
- protected:   
-  static bool calcDOC_;
-  
-  std::vector<PSMDescription*> psms_;
-  int label_;
-  static FeatureNames featureNames_;
+	void initFeatureTables(const unsigned int numFeatures);
+
+	void inline setLabel(int l) { label_ = l; }
+	int inline getLabel() const { return label_; }
+
+	// 返回该数据集 PSM 数目
+	unsigned int inline getSize() const { return psms_.size(); }
+
+	// Include description of correct features, i.e. features describing the difference between the observed and predicted isoelectric point, retention time and precursor mass.
+	static inline void setCalcDoc(bool on) { calcDOC_ = on; }
+
+	// 是否计算 doc，需要RT和dM
+	static inline bool getCalcDoc() { return calcDOC_; }
+
+	// 返回 featureNames 引用
+	static FeatureNames& getFeatureNames() { return featureNames_; }
+
+	static void resetFeatureNames() {
+		featureNames_ = FeatureNames();
+		FeatureNames::resetNumFeatures();
+	}
+
+	// 返回 feature 数目，如果计算DOC，也包含在内(+4, docpI, docdM, docRT, docdMdRT)
+	static unsigned getNumFeatures() { return featureNames_.getNumFeatures(); }
+
+	void setRetentionTime(map<int, double>& scan2rt) {
+		PSMDescriptionDOC::setRetentionTime(psms_, scan2rt);
+	}
+
+	bool writeTabData(std::ofstream& out);
+
+	void print_10features();
+	void print_features();
+
+	void fillFeatures(std::vector<ScoreHolder>& scores);
+
+	void fillFeatures(std::vector<double*>& features);
+
+	void fillDOCFeatures(std::vector<double*>& features);
+
+	void fillRtFeatures(std::vector<double*>& rtFeatures);
+
+	void readPsm(const std::string& line, const unsigned int lineNr,
+		const std::vector<OptionalField>& optionalFields,
+		FeatureMemoryPool& featurePool);
+
+	static int readPsm(const std::string& line, const unsigned int lineNr,
+		const std::vector<OptionalField>& optionalFields, bool readProteins,
+		PSMDescription*& myPsm, FeatureMemoryPool& featurePool);
+
+	void registerPsm(PSMDescription* myPsm);
+
+protected:
+	static bool calcDOC_;
+
+	// contains all PSM in the file
+	std::vector<PSMDescription*> psms_;
+	int label_;
+	static FeatureNames featureNames_;
 };
 
 #endif /*DATASET_H_*/

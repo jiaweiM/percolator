@@ -79,6 +79,7 @@ double CommandLineParser::getDouble(std::string dest, double lower,
   return val;
 }
 
+
 int CommandLineParser::getInt(std::string dest, int lower, int upper) {
   int val;
   if (!from_string<int> (val, options[dest]) || val < lower || val > upper) 

@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\code\library\percolator\src\BaseSpline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\DescriptionOfCorrect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\MassHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\PSMDescription.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\PSMDescriptionDOC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\ResultHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\XMLInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\SetHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\StdvNormalizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\svm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Caller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\CrossValidation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Enzyme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Globals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Normalizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\SanityCheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\UniNormalizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\DataSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\FeatureNames.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\LogisticRegression.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Option.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\PosteriorEstimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\ProteinProbEstimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\ProteinFDRestimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Scores.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\PseudoRandom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\SqtSanityCheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\ssl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\EludeModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\PackedVector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\PackedMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\MyException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\FidoInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\ProteinScoreHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\PickedProteinInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\code\library\percolator\src\FeatureMemoryPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="parser.cxx" />
+    <ClCompile Include="serializer.cxx" />
+    <ClCompile Include="converters\Msgfplus2Pin.cpp" />
+    <ClCompile Include="converters\MsgfplusReader.cpp" />
+    <ClCompile Include="converters\Interface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\code\library\percolator\src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{F034A532-477F-33AA-8F6B-60B28350027E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Caller.h" />
+    <ClInclude Include="CrossValidation.h" />
+    <ClInclude Include="DataSet.h" />
+    <ClInclude Include="DescriptionOfCorrect.h" />
+    <ClInclude Include="EludeModel.h" />
+    <ClInclude Include="Enzyme.h" />
+    <ClInclude Include="FeatureMemoryPool.h" />
+    <ClInclude Include="FeatureNames.h" />
+    <ClInclude Include="FidoInterface.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="LogisticRegression.h" />
+    <ClInclude Include="MassHandler.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MyException.h" />
+    <ClInclude Include="Normalizer.h" />
+    <ClInclude Include="Option.h" />
+    <ClInclude Include="PackedMatrix.h" />
+    <ClInclude Include="PackedVector.h" />
+    <ClInclude Include="parser.hxx" />
+    <ClInclude Include="StdvNormalizer.h" />
+    <ClInclude Include="ssl.h" />
+    <ClInclude Include="Scores.h" />
+    <ClInclude Include="PosteriorEstimator.h" />
+    <ClInclude Include="PickedProteinInterface.h" />
+    <ClInclude Include="ProteinFDRestimator.h" />
+    <ClInclude Include="ProteinProbEstimator.h" />
+    <ClInclude Include="ProteinScoreHolder.h" />
+    <ClInclude Include="PseudoRandom.h" />
+    <ClInclude Include="PSMDescription.h" />
+    <ClInclude Include="PSMDescriptionDOC.h" />
+    <ClInclude Include="ResultHolder.h" />
+    <ClInclude Include="SanityCheck.h" />
+    <ClInclude Include="serializer.hxx" />
+    <ClInclude Include="SetHandler.h" />
+    <ClInclude Include="SqtSanityCheck.h" />
+    <ClInclude Include="svm.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="UniNormalizer.h" />
+    <ClInclude Include="Version.h" />
+    <ClInclude Include="XMLInterface.h" />
+    <ClInclude Include="BaseSpline.h" />
+    <ClInclude Include="converters\Msgfplus2Pin.h" />
+    <ClInclude Include="converters\MsgfplusReader.h" />
+    <ClInclude Include="converters\parseoptions.h" />
+    <ClInclude Include="converters\Interface.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Globals.h.cmake" />
+    <None Include="Version.h.cmake" />
+  </ItemGroup>
+</Project>

@@ -31,83 +31,94 @@
 #include "ssl.h"
 
 class CrossValidation {
-  
- public:
-  CrossValidation(bool quickValidation, bool reportPerformanceEachIteration, 
-    double testFdr, double selectionFdr, double initialSelectionFdr, 
-    double selectedCpos, double selectedCneg, int niter, bool usePi0, 
-    int nestedXvalBins, bool trainBestPositive);
-  ~CrossValidation();
-  
-  int preIterationSetup(Scores & fullset, SanityCheck * pCheck, 
-                        Normalizer* pNorm, FeatureMemoryPool& featurePool);
-  
-  void train(Normalizer* pNorm);
-  
-  void postIterationProcessing(Scores & fullset, SanityCheck * pCheck);
-  
-  void printAllWeights(ostream & weightStream, Normalizer* pNorm);
-  
-  void printDOC();
-  void getAvgWeights(std::vector<double>& weights, Normalizer* pNorm);
-  
-  void inline setSelectedCpos(double cpos) { selectedCpos_ = cpos; }
-  double inline getSelectedCpos() { return selectedCpos_; }
-  void inline setSelectedCneg(double cneg) { selectedCneg_ = cneg; }
-  double inline getSelectedCneg() { return selectedCneg_; }
-  
-  void inline setSelectionFdr(double fdr) { selectionFdr_ = fdr; }
-  double inline getSelectionFdr() { return selectionFdr_; }
-  void inline setTestFdr(double fdr) { testFdr_ = fdr; }
-  
-  void inline setNiter(unsigned int n) { niter_ = n; }
-  unsigned int inline getNiter() { return niter_; }
-  void inline setQuickValidation(bool on) { quickValidation_ = on; }
-  void inline setReportPerformanceEachIteration(bool on) { 
-    reportPerformanceEachIteration_ = on;
-  }
-  
- protected:
-  std::vector<AlgIn*> svmInputs_;
-  std::vector< std::vector<double> > w_; // svm weights for each fold
-  
-  bool quickValidation_;
-  bool usePi0_;
-  bool reportPerformanceEachIteration_;
-  
-  double testFdr_; // fdr used for cross validation performance measuring
-  double selectionFdr_; // fdr used for determining positive training set
-  double initialSelectionFdr_; // fdr used for determining positive training set in first iteration
-  double selectedCpos_; // soft margin parameter for positive training set
-  double selectedCneg_; // soft margin parameter for negative training set
-  
-  unsigned int niter_;
-  unsigned int nestedXvalBins_;
-  
-  bool trainBestPositive_;
-  
-  const static double requiredIncreaseOver2Iterations_;
-  
-  const static unsigned int numFolds_;
-  const static unsigned int numAlgInObjects_;
-  std::vector<Scores> trainScores_, testScores_;
-  std::vector<double> candidatesCpos_, candidatesCfrac_;
-  
-  int processSingleFold(unsigned int set, double selectionFdr,
-                         const vector<double>& cpos_vec, 
-                         const vector<double>& cfrac_vec, 
-                         double& best_cpos, double& best_cfrac, 
-                         vector_double* pWeights, options* pOptions);
-  int doStep(bool updateDOC, Normalizer* pNorm, double selectionFdr);
-  
-  void printSetWeights(ostream & weightStream, unsigned int set);
-  void printRawSetWeights(ostream & weightStream, unsigned int set, 
-                       Normalizer* pNorm);
-  
-  void printAllWeightsColumns(ostream & weightStream);
-  void printAllRawWeightsColumns(ostream & weightStream, Normalizer* pNorm);
-  static void printAllWeightsColumns(std::vector< std::vector<double> > weightMatrix, 
-                              ostream & weightStream);
+
+public:
+	CrossValidation(bool quickValidation, bool reportPerformanceEachIteration,
+		double testFdr, double selectionFdr, double initialSelectionFdr,
+		double selectedCpos, double selectedCneg, int niter, bool usePi0,
+		int nestedXvalBins, bool trainBestPositive);
+
+	~CrossValidation();
+
+	int preIterationSetup(Scores& fullset, SanityCheck* pCheck,
+		Normalizer* pNorm, FeatureMemoryPool& featurePool);
+
+	void train(Normalizer* pNorm);
+
+	void postIterationProcessing(Scores& fullset, SanityCheck* pCheck);
+
+	void printAllWeights(ostream& weightStream, Normalizer* pNorm);
+
+	void printDOC();
+
+	void getAvgWeights(std::vector<double>& weights, Normalizer* pNorm);
+
+	void inline setSelectedCpos(double cpos) { selectedCpos_ = cpos; }
+
+	double inline getSelectedCpos() { return selectedCpos_; }
+
+	void inline setSelectedCneg(double cneg) { selectedCneg_ = cneg; }
+
+	double inline getSelectedCneg() { return selectedCneg_; }
+
+	void inline setSelectionFdr(double fdr) { selectionFdr_ = fdr; }
+
+	double inline getSelectionFdr() { return selectionFdr_; }
+
+	void inline setTestFdr(double fdr) { testFdr_ = fdr; }
+
+	void inline setNiter(unsigned int n) { niter_ = n; }
+
+	unsigned int inline getNiter() { return niter_; }
+
+	void inline setQuickValidation(bool on) { quickValidation_ = on; }
+
+	void inline setReportPerformanceEachIteration(bool on) {
+		reportPerformanceEachIteration_ = on;
+	}
+
+protected:
+	std::vector<AlgIn*> svmInputs_;
+	std::vector< std::vector<double> > w_; // svm weights for each fold
+	// 快速验证，default=false
+	bool quickValidation_;
+	bool usePi0_;
+	bool reportPerformanceEachIteration_;
+
+	double testFdr_; // fdr used for cross validation performance measuring
+	double selectionFdr_; // fdr used for determining positive training set
+	double initialSelectionFdr_; // fdr used for determining positive training set in first iteration
+	double selectedCpos_; // soft margin parameter for positive training set
+	double selectedCneg_; // soft margin parameter for negative training set
+
+	unsigned int niter_;
+	unsigned int nestedXvalBins_;
+
+	bool trainBestPositive_;
+
+	const static double requiredIncreaseOver2Iterations_;
+
+	const static unsigned int numFolds_;
+	const static unsigned int numAlgInObjects_;
+	std::vector<Scores> trainScores_;
+	std::vector<Scores> testScores_;
+	std::vector<double> candidatesCpos_, candidatesCfrac_;
+
+	int processSingleFold(unsigned int set, double selectionFdr,
+		const vector<double>& cpos_vec,
+		const vector<double>& cfrac_vec,
+		double& best_cpos, double& best_cfrac,
+		vector_double* pWeights, options* pOptions);
+	int doStep(bool updateDOC, Normalizer* pNorm, double selectionFdr);
+
+	void printSetWeights(ostream& weightStream, unsigned int set);
+	void printRawSetWeights(ostream& weightStream, unsigned int set,
+		Normalizer* pNorm);
+
+	void printAllWeightsColumns(ostream& weightStream);
+	void printAllRawWeightsColumns(ostream& weightStream, Normalizer* pNorm);
+	static void printAllWeightsColumns(std::vector< std::vector<double> > weightMatrix,
+		ostream& weightStream);
 };
 
 #endif /*CROSSVALIDATION_H_*/

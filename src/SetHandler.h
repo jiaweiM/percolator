@@ -46,13 +46,13 @@
 using namespace std;
 
 struct PSMDescriptionPriority {
-  PSMDescription* psm;
-  size_t priority;
-  int label;
-  
-  bool operator<(const PSMDescriptionPriority& psmp) const {
-    return (priority < psmp.priority);
-  }
+	PSMDescription* psm;
+	size_t priority;
+	int label;
+
+	bool operator<(const PSMDescriptionPriority& psmp) const {
+		return (priority < psmp.priority);
+	}
 };
 
 typedef std::pair<int, double> ScanId;
@@ -60,73 +60,82 @@ typedef std::pair<int, double> ScanId;
 /*
 * SetHandler is a class that provides functionality to handle training,
 * testing, Xval data sets, reads/writes from/to a file, prints them.
-*
 */
-class SetHandler {    
- public:
-  SetHandler(unsigned int maxPSMs);
-  virtual ~SetHandler();
+class SetHandler {
 
-  void push_back_dataset(DataSet* ds);
-     
-  //const double* getFeatures(const int setPos, const int ixPos) const; 
-  size_t getMaxPSMs() { return maxPSMs_; }
-  
-  // Reads in tab delimited stream and returns a SanityCheck object based on
-  // the presence of default weights. Returns 0 on error, 1 on success.
-  int readTab(istream& dataStream, SanityCheck*& pCheck);
-  int readAndScoreTab(istream& dataStream, 
-    std::vector<double>& rawWeights, Scores& allScores, SanityCheck*& pCheck);
-  void addQueueToSets(std::priority_queue<PSMDescriptionPriority>& subsetPSMs,
-    DataSet* targetSet, DataSet* decoySet);
-  
-  void writeTab(const string& dataFN, SanityCheck* pCheck);
-  void fillFeatures(vector<ScoreHolder> &scores, int label);
-  void normalizeFeatures(Normalizer*& pNorm);
-  void normalizeDOCFeatures(Normalizer* pNorm);
-  void setRetentionTime(map<int, double>& scan2rt);
-  
-  int const getLabel(int setPos);
-  inline int getSizeFromLabel(int label) {
-    return (subsets_[getSubsetIndexFromLabel(label)]->getSize());
-  }
-  
-  inline DataSet* getSubset(unsigned int ix) { return (subsets_[ix]); }
-  inline DataSet* getSubsetFromLabel(int label) {
-    return (subsets_[getSubsetIndexFromLabel(label)]);
-  }
-  
-  static void deletePSMPointer(PSMDescription* psm);
-  
-  FeatureMemoryPool& getFeaturePool() { return featurePool_; }
-  
-  void reset();
-  
- protected:
-  size_t maxPSMs_;
-  vector<DataSet*> subsets_;
-  FeatureMemoryPool featurePool_;
-  
-  unsigned int getSubsetIndexFromLabel(int label);
-  static inline std::string &rtrim(std::string &s);
-  
-  int getOptionalFields(const std::string& headerLine, 
-    std::vector<OptionalField>& optionalFields);
-  bool isDefaultDirectionLine(const std::string& defaultDirectionLine);
-  int getNumFeatures(const std::string& line, int optionalFieldCount);
-  void getFeatureNames(const std::string& headerLine, int numFeatures, 
-    int optionalFieldCount, FeatureNames& featureNames);
-  bool getInitValues(const std::string& defaultDirectionLine, 
-    int optionalFieldCount, std::vector<double>& init_values);
-  ScanId getScanId(const std::string& psmLine, int& label,
-    std::vector<OptionalField>& optionalFields, unsigned int lineNr);
-    
-  void readPSMs(istream& dataStream, std::string& psmLine, 
-    bool hasInitialValueRow, bool& separateSearches,
-    std::vector<OptionalField>& optionalFields);
-  void readAndScorePSMs(istream& dataStream, std::string& psmLine, 
-    bool hasInitialValueRow, std::vector<OptionalField>& optionalFields, 
-    std::vector<double>& rawWeights, Scores& allScores);
+public:
+	SetHandler(unsigned int maxPSMs);
+	virtual ~SetHandler();
+
+	void push_back_dataset(DataSet* ds);
+
+	//const double* getFeatures(const int setPos, const int ixPos) const; 
+	size_t getMaxPSMs() { return maxPSMs_; }
+
+	// 读取 TAB 文件
+	// @param dataStream 输入流
+	// @param pCheck SanityCheck object based on the presence of default weights.
+	// @return Returns 0 on error, 1 on success.
+	int readTab(istream& dataStream, SanityCheck*& pCheck);
+
+	int readAndScoreTab(istream& dataStream,
+		std::vector<double>& rawWeights, Scores& allScores, SanityCheck*& pCheck);
+	void addQueueToSets(std::priority_queue<PSMDescriptionPriority>& subsetPSMs,
+		DataSet* targetSet, DataSet* decoySet);
+
+	void writeTab(const string& dataFN, SanityCheck* pCheck);
+	void fillFeatures(vector<ScoreHolder>& scores, int label);
+	void normalizeFeatures(Normalizer*& pNorm);
+	void normalizeDOCFeatures(Normalizer* pNorm);
+	void setRetentionTime(map<int, double>& scan2rt);
+
+	int const getLabel(int setPos);
+
+	// 指定 label 的PSM数据
+	inline int getSizeFromLabel(int label) {
+		return (subsets_[getSubsetIndexFromLabel(label)]->getSize());
+	}
+
+	inline DataSet* getSubset(unsigned int ix) { return (subsets_[ix]); }
+	inline DataSet* getSubsetFromLabel(int label) {
+		return (subsets_[getSubsetIndexFromLabel(label)]);
+	}
+
+	static void deletePSMPointer(PSMDescription* psm);
+
+	FeatureMemoryPool& getFeaturePool() { return featurePool_; }
+
+	void reset();
+
+protected:
+	size_t maxPSMs_;
+	// 所有数据集，即 target 和 decoy PSM 数据集
+	vector<DataSet*> subsets_;
+	FeatureMemoryPool featurePool_;
+
+	// 返回指定 label 数据集对应的索引
+	// @param label 数据集标签
+	unsigned int getSubsetIndexFromLabel(int label);
+	static inline std::string& rtrim(std::string& s);
+
+	int getOptionalFields(const std::string& headerLine,
+		std::vector<OptionalField>& optionalFields);
+	bool isDefaultDirectionLine(const std::string& defaultDirectionLine);
+	// 除去 id, label 和可选字段，还有多少 features
+	int getNumFeatures(const std::string& line, int optionalFieldCount);
+	void getFeatureNames(const std::string& headerLine, int numFeatures,
+		int optionalFieldCount, FeatureNames& featureNames);
+	bool getInitValues(const std::string& defaultDirectionLine,
+		int optionalFieldCount, std::vector<double>& init_values);
+	ScanId getScanId(const std::string& psmLine, int& label,
+		std::vector<OptionalField>& optionalFields, unsigned int lineNr);
+
+	void readPSMs(istream& dataStream, std::string& psmLine,
+		bool hasInitialValueRow, bool& separateSearches,
+		std::vector<OptionalField>& optionalFields);
+	void readAndScorePSMs(istream& dataStream, std::string& psmLine,
+		bool hasInitialValueRow, std::vector<OptionalField>& optionalFields,
+		std::vector<double>& rawWeights, Scores& allScores);
 };
 
 #endif /*SETHANDLER_H_*/

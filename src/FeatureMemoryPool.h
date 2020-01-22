@@ -17,34 +17,35 @@
 #ifndef FEATURE_MEMORY_POOL_H_
 #define FEATURE_MEMORY_POOL_H_
 
-/* Adapted from https://www.thinkmind.org/download.php?articleid=computation_tools_2012_1_10_80006 */
+ /* Adapted from https://www.thinkmind.org/download.php?articleid=computation_tools_2012_1_10_80006 */
 
 #include <vector>
 #include <iostream>
 
 class FeatureMemoryPool {
- private:
-   static const unsigned int kBlockSize = 65536; // in number of doubles
-   unsigned int numRowsPerBlock_, numFeatures_, initializedRows_;
-   std::vector<double*> memStarts_;
-   std::vector<double*> freeRows_;
-   bool isInitialized_;
- public:
-  FeatureMemoryPool() : numRowsPerBlock_(0), numFeatures_(0), 
-                        initializedRows_(0), isInitialized_(false) {}
 
-  ~FeatureMemoryPool() { destroyPool(); }
+private:
+	static const unsigned int kBlockSize = 65536; // in number of doubles
+	unsigned int numRowsPerBlock_, numFeatures_, initializedRows_;
+	std::vector<double*> memStarts_;
+	std::vector<double*> freeRows_;
+	bool isInitialized_;
+public:
+	FeatureMemoryPool() : numRowsPerBlock_(0), numFeatures_(0),
+		initializedRows_(0), isInitialized_(false) {}
 
-  void createPool(size_t numFeatures);
-  void createNewBlock();
-  void destroyPool();
-  
-  bool isInitialized() const { return isInitialized_; }
+	~FeatureMemoryPool() { destroyPool(); }
 
-  double* addressFromIdx(unsigned int i) const;
+	void createPool(size_t numFeatures);
+	void createNewBlock();
+	void destroyPool();
 
-  double* allocate();
-  void deallocate(double* p);
+	bool isInitialized() const { return isInitialized_; }
+
+	double* addressFromIdx(unsigned int i) const;
+
+	double* allocate();
+	void deallocate(double* p);
 };
 
 #endif /* FEATURE_MEMORY_POOL_H_ */

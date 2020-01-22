@@ -31,16 +31,16 @@ using namespace std;
 
 class Interface {
 
- public:
-   
+public:
+
 	Interface();
 	virtual ~Interface();
 	virtual std::string greeter();
 	virtual std::string extendedGreeter();
-	virtual bool parseOpt(int argc, char **argv,const std::string &usage);
-	
- protected:
-  
+	virtual bool parseOpt(int argc, char** argv, const std::string& usage);
+
+protected:
+
 	ParseOptions parseOptions;
 	std::string targetFN;
 	std::string decoyFN;

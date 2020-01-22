@@ -26,65 +26,67 @@
 #include "PseudoRandom.h"
 
 class PosteriorEstimator {
- public:
-  PosteriorEstimator(){};
-  virtual ~PosteriorEstimator(){};
-  bool parseOptions(int argc, char** argv);
-  string greeter();
-  int run();
-  static void estimatePEP(std::vector<std::pair<double, bool> >& combined,
-          bool usePi0, double pi0, std::vector<double>& peps,
-		      bool include_negative = false);
-  static void estimatePEPGeneralized(std::vector<std::pair<double, bool> >& combined,
-				 std::vector<double>& peps,
-				 bool include_negative = false);
-  static void getPValues(const std::vector<std::pair<double, bool> >& combined,
-                         std::vector<double>& p);
-  static void getQValues(double pi0,
-                         const std::vector<std::pair<double, bool> >& combined,
-                         std::vector<double>& q, bool skipDecoysPlusOne = false);
-  static void getQValuesFromP(double pi0, const std::vector<double>& p,
-                              std::vector<double>& q);
-  static void getQValuesFromPEP(const std::vector<double>& pep,
-                              std::vector<double>& q);
-  static bool checkSeparation(std::vector<double>& p);
-  static double estimatePi0(std::vector<double>& p,
-                            const unsigned int numBoot = 100);
-  static void setReversed(bool status) {
-	  reversed = status;
-  }
-  static void setGeneralized(bool general) {
-	  competition = general;
-	  assert(!(general && pvalInput));
-  }
-  static void setNegative(bool negative) {
-    includeNegativesInResult = negative;
-  }
-  static void setUsePi0(bool usePi0) {
-    usePi0_ = usePi0;
-  }
- protected:
-  void finishStandalone(std::vector<std::pair<double, bool> >& combined,
-                        const std::vector<double>& peps,
-                        const std::vector<double>& p, double pi0);
-  void finishStandaloneGeneralized(std::vector<std::pair<double, bool> >& combined,
-                        const std::vector<double>& peps);
+public:
+	PosteriorEstimator() {};
+	virtual ~PosteriorEstimator() {};
+	bool parseOptions(int argc, char** argv);
+	string greeter();
+	int run();
+	static void estimatePEP(std::vector<std::pair<double, bool> >& combined,
+		bool usePi0, double pi0, std::vector<double>& peps,
+		bool include_negative = false);
+	static void estimatePEPGeneralized(std::vector<std::pair<double, bool> >& combined,
+		std::vector<double>& peps,
+		bool include_negative = false);
+	static void getPValues(const std::vector<std::pair<double, bool> >& combined,
+		std::vector<double>& p);
+	static void getQValues(double pi0,
+		const std::vector<std::pair<double, bool> >& combined,
+		std::vector<double>& q, bool skipDecoysPlusOne = false);
+	static void getQValuesFromP(double pi0, const std::vector<double>& p,
+		std::vector<double>& q);
+	static void getQValuesFromPEP(const std::vector<double>& pep,
+		std::vector<double>& q);
+	static bool checkSeparation(std::vector<double>& p);
 
-  static void getMixMaxCounts(const std::vector<std::pair<double, bool> >& combined,
-                       std::vector<double>& h_w_le_z,
-                       std::vector<double>& h_z_le_z);
+	static double estimatePi0(std::vector<double>& p,
+		const unsigned int numBoot = 100);
 
-  static void estimate(std::vector<std::pair<double, bool> >& combined,
-                       LogisticRegression& lr, bool usePi0, double pi0);
-  static void binData(const std::vector<std::pair<double, bool> >& combined,
-                      double pi0, std::vector<double>& medians,
-                      std::vector<double>& negatives,
-                      std::vector<double>& sizes);
+	static void setReversed(bool status) {
+		reversed = status;
+	}
+	static void setGeneralized(bool general) {
+		competition = general;
+		assert(!(general && pvalInput));
+	}
+	static void setNegative(bool negative) {
+		includeNegativesInResult = negative;
+	}
+	static void setUsePi0(bool usePi0) {
+		usePi0_ = usePi0;
+	}
+protected:
+	void finishStandalone(std::vector<std::pair<double, bool> >& combined,
+		const std::vector<double>& peps,
+		const std::vector<double>& p, double pi0);
+	void finishStandaloneGeneralized(std::vector<std::pair<double, bool> >& combined,
+		const std::vector<double>& peps);
 
-  // used for standalone execution
-  std::string targetFile, decoyFile;
-  static bool reversed, pvalInput, competition, includeNegativesInResult, usePi0_;
-  std::string resultFileName;
+	static void getMixMaxCounts(const std::vector<std::pair<double, bool> >& combined,
+		std::vector<double>& h_w_le_z,
+		std::vector<double>& h_z_le_z);
+
+	static void estimate(std::vector<std::pair<double, bool> >& combined,
+		LogisticRegression& lr, bool usePi0, double pi0);
+	static void binData(const std::vector<std::pair<double, bool> >& combined,
+		double pi0, std::vector<double>& medians,
+		std::vector<double>& negatives,
+		std::vector<double>& sizes);
+
+	// used for standalone execution
+	std::string targetFile, decoyFile;
+	static bool reversed, pvalInput, competition, includeNegativesInResult, usePi0_;
+	std::string resultFileName;
 };
 
 #endif /*POSTERIORESTIMATOR_H_*/

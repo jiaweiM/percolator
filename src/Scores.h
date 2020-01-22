@@ -18,7 +18,7 @@
 #define SCORES_H_
 
 #ifndef WIN32
-  #include <stdint.h>
+#include <stdint.h>
 #endif
 
 #include <cstdlib>
@@ -38,118 +38,121 @@
 class Scores;
 
 /*
-* ScoreHolder is a class that provides a way to assign score value to a
-* PSMDescription and have a way to compare PSMs based on the assigned
-* score value and output them into the stream.
+* ScoreHolder 为 PSMDescription 提供打分值，根据打分值对比 PSMs，以及输出PSMs 功能。
 *
 * Here are some useful abbreviations:
 * PSM - Peptide Spectrum Match
-*
 */
 class ScoreHolder {
- public:
-  double score, q, pep, p;
-  PSMDescription* pPSM;
-  int label;
-  //std::vector<std::string> psms_list;
-  
-  ScoreHolder() : score(0.0), q(0.0), pep(0.0), p(0.0), label(0), pPSM(NULL) {}
-  ScoreHolder(const double s, const int l, PSMDescription* psm = NULL) :
-    score(s), q(0.0), pep(0.0), p(0.0), label(l), pPSM(psm) {}
-  virtual ~ScoreHolder() {}
-  
-  std::pair<double, bool> toPair() const { 
-    return pair<double, bool> (score, label > 0); 
-  }
-  
-  inline bool isTarget() const { return label != -1; }
-  inline bool isDecoy() const { return label == -1; }
-  void printPSM(ostream& os, bool printDecoys, bool printExpMass);
-  void printPeptide(ostream& os, bool printDecoys, bool printExpMass, Scores& fullset);
+public:
+	double score, q, pep, p;
+	// PSM 引用
+	PSMDescription* pPSM;
+	int label;
+
+	ScoreHolder() : score(0.0), q(0.0), pep(0.0), p(0.0), label(0), pPSM(NULL) {}
+
+	// 构造函数
+	// @param s 打分值，初始为0
+	// @param l, label
+	// @param psm PSM 指针
+	ScoreHolder(const double s, const int l, PSMDescription* psm = NULL) :
+		score(s), q(0.0), pep(0.0), p(0.0), label(l), pPSM(psm) {}
+
+	virtual ~ScoreHolder() {}
+
+	std::pair<double, bool> toPair() const {
+		return pair<double, bool>(score, label > 0);
+	}
+
+	inline bool isTarget() const { return label != -1; }
+	inline bool isDecoy() const { return label == -1; }
+	void printPSM(ostream& os, bool printDecoys, bool printExpMass);
+	void printPeptide(ostream& os, bool printDecoys, bool printExpMass, Scores& fullset);
 };
 
 inline bool operator>(const ScoreHolder& one, const ScoreHolder& other);
 inline bool operator<(const ScoreHolder& one, const ScoreHolder& other);
-  
+
 struct lexicOrderProb : public binary_function<ScoreHolder, ScoreHolder, bool> {
-  static int compStrIt(std::string::iterator first1, std::string::iterator last1,
-                       std::string::iterator first2, std::string::iterator last2) {
-    for ( ; (first1 != last1) && (first2 != last2); first1++, first2++ ) {
-      if (*first1 < *first2) return 1;
-      if (*first2 < *first1) return -1;
-    }
-    if (first2 != last2) return 1;
-    else if (first1 != last1) return -1;
-    else return 0;
-  }
-  
-  bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
-    int peptCmp = compStrIt(__x.pPSM->getFullPeptideSequence().begin() + 2, 
-                            __x.pPSM->getFullPeptideSequence().end() - 2, 
-                            __y.pPSM->getFullPeptideSequence().begin() + 2, 
-                            __y.pPSM->getFullPeptideSequence().end() - 2);
-    return ( ( peptCmp == 1 ) 
-    || ( (peptCmp == 0) && (__x.label > __y.label) )
-    || ( (peptCmp == 0) && (__x.label == __y.label) && (__x.score > __y.score) ) );
-  }
+	static int compStrIt(std::string::iterator first1, std::string::iterator last1,
+		std::string::iterator first2, std::string::iterator last2) {
+		for (; (first1 != last1) && (first2 != last2); first1++, first2++) {
+			if (*first1 < *first2) return 1;
+			if (*first2 < *first1) return -1;
+		}
+		if (first2 != last2) return 1;
+		else if (first1 != last1) return -1;
+		else return 0;
+	}
+
+	bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
+		int peptCmp = compStrIt(__x.pPSM->getFullPeptideSequence().begin() + 2,
+			__x.pPSM->getFullPeptideSequence().end() - 2,
+			__y.pPSM->getFullPeptideSequence().begin() + 2,
+			__y.pPSM->getFullPeptideSequence().end() - 2);
+		return ((peptCmp == 1)
+			|| ((peptCmp == 0) && (__x.label > __y.label))
+			|| ((peptCmp == 0) && (__x.label == __y.label) && (__x.score > __y.score)));
+	}
 };
 
 struct OrderScanMassCharge : public binary_function<ScoreHolder, ScoreHolder, bool> {
-  bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
-    return ( (__x.pPSM->scan < __y.pPSM->scan ) 
-    || ( (__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass < __y.pPSM->expMass) )
-    || ( (__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass) 
-       && (__x.score > __y.score) ) );
-  }
+	bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
+		return ((__x.pPSM->scan < __y.pPSM->scan)
+			|| ((__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass < __y.pPSM->expMass))
+			|| ((__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass)
+				&& (__x.score > __y.score)));
+	}
 };
 
 struct OrderScanMassLabelCharge : public binary_function<ScoreHolder, ScoreHolder, bool> {
-  bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
-    return ( (__x.pPSM->scan < __y.pPSM->scan ) 
-    || ( (__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass < __y.pPSM->expMass) )
-    || ( (__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass) 
-       && (__x.label > __y.label) )
-    || ( (__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass) 
-       && (__x.label == __y.label) && (__x.score > __y.score) ) );
-  }
+	bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
+		return ((__x.pPSM->scan < __y.pPSM->scan)
+			|| ((__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass < __y.pPSM->expMass))
+			|| ((__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass)
+				&& (__x.label > __y.label))
+			|| ((__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass)
+				&& (__x.label == __y.label) && (__x.score > __y.score)));
+	}
 };
 
 struct OrderScanLabel : public binary_function<ScoreHolder, ScoreHolder, bool> {
-  bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
-    return ( (__x.pPSM->scan < __y.pPSM->scan ) 
-    || ( (__x.pPSM->scan == __y.pPSM->scan) && (__x.label > __y.label) ) );
-  }
+	bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
+		return ((__x.pPSM->scan < __y.pPSM->scan)
+			|| ((__x.pPSM->scan == __y.pPSM->scan) && (__x.label > __y.label)));
+	}
 };
 
 
 struct UniqueScanMassCharge : public binary_function<ScoreHolder, ScoreHolder, bool> {
-  bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
-    return (__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass);
-  }
+	bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
+		return (__x.pPSM->scan == __y.pPSM->scan) && (__x.pPSM->expMass == __y.pPSM->expMass);
+	}
 };
 
 struct UniqueScanMassLabelCharge : public binary_function<ScoreHolder, ScoreHolder, bool> {
-  bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
-    return (__x.pPSM->scan == __y.pPSM->scan) && (__x.label == __y.label) && (__x.pPSM->expMass == __y.pPSM->expMass);
-  }
+	bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
+		return (__x.pPSM->scan == __y.pPSM->scan) && (__x.label == __y.label) && (__x.pPSM->expMass == __y.pPSM->expMass);
+	}
 };
 
 struct UniqueScanLabel : public binary_function<ScoreHolder, ScoreHolder, bool> {
-  bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
-    return (__x.pPSM->scan == __y.pPSM->scan) && (__x.label == __y.label);
-  }
+	bool operator()(const ScoreHolder& __x, const ScoreHolder& __y) const {
+		return (__x.pPSM->scan == __y.pPSM->scan) && (__x.label == __y.label);
+	}
 };
 
 inline string getRidOfUnprintablesAndUnicode(string inpString) {
-  string outputs = "";
-  for (unsigned int jj = 0; jj < inpString.size(); jj++) {
-    signed char ch = inpString[jj];
-    //NOTE signed char ranges -128 to 127
-    if (((int)ch) >= 32) {
-      outputs += ch;
-    }
-  }
-  return outputs;
+	string outputs = "";
+	for (unsigned int jj = 0; jj < inpString.size(); jj++) {
+		signed char ch = inpString[jj];
+		//NOTE signed char ranges -128 to 127
+		if (((int)ch) >= 32) {
+			outputs += ch;
+		}
+	}
+	return outputs;
 }
 
 class SetHandler;
@@ -164,99 +167,109 @@ class AlgIn;
 * FDR - False Discovery Rate
 * Pi0 - prior probability of null hypothesis
 * TDC - Target Decoy Competition
-*
 */
 class Scores {
- public:
-  Scores(bool usePi0) : usePi0_(usePi0), pi0_(1.0), 
-    targetDecoySizeRatio_(1.0), totalNumberOfDecoys_(0),
-    totalNumberOfTargets_(0), decoyPtr_(NULL), targetPtr_(NULL) {}
-  ~Scores() {}
-  void merge(vector<Scores>& sv, double fdr);
-  void postMergeStep();
-  
-  std::vector<ScoreHolder>::iterator begin() { return scores_.begin(); }
-  std::vector<ScoreHolder>::iterator end() { return scores_.end(); }
-  
-  double calcScore(const double* features, const std::vector<double>& w) const;
-  void scoreAndAddPSM(ScoreHolder& sh, const std::vector<double>& rawWeights,
-                      FeatureMemoryPool& featurePool);
-  int calcScores(vector<double>& w, double fdr, bool skipDecoysPlusOne = false);
-  int calcQ(double fdr, bool skipDecoysPlusOne = false);
-  void recalculateDescriptionOfCorrect(const double fdr);
-  void calcPep();
-  
-  void fillFeatures(SetHandler& setHandler);
-  
-  int getInitDirection(const double initialSelectionFdr, std::vector<double>& direction);
-  void createXvalSetsBySpectrum(std::vector<Scores>& train, 
-      std::vector<Scores>& test, const unsigned int xval_fold,
-      FeatureMemoryPool& featurePool);
-  
-  void generatePositiveTrainingSet(AlgIn& data, const double fdr,
-      const double cpos, const bool trainBestPositive);
-  void generateNegativeTrainingSet(AlgIn& data, const double cneg);
-  
-  void recalculateSizes();
-  void normalizeScores(double fdr);
-  
-  void weedOutRedundant();
-  void weedOutRedundant(std::map<std::string, unsigned int>& peptideSpecCounts, 
-                        double specCountQvalThreshold);
-  void weedOutRedundantTDC();
-  void weedOutRedundantMixMax();
-  
-  void printRetentionTime(ostream& outs, double fdr);
-  unsigned getQvaluesBelowLevel(double level);
-  
-  void setDOCFeatures(Normalizer* pNorm);
-  
-  void print(int label, std::ostream& os = std::cout);
-  
-  DescriptionOfCorrect& getDOC() { return doc_; }
-  
-  inline double getPi0() const { return pi0_; }
-  inline double getTargetDecoySizeRatio() const { 
-    return targetDecoySizeRatio_; 
-  }
-  inline unsigned int size() const { 
-    return totalNumberOfTargets_ + totalNumberOfDecoys_; 
-  }
-  inline unsigned int posSize() const { return totalNumberOfTargets_; }
-  inline unsigned int negSize() const { return totalNumberOfDecoys_; }  
-  
-  inline void addScoreHolder(const ScoreHolder& sh) {
-    scores_.push_back(sh);
-  }
-  
-  std::vector<PSMDescription*>& getPsms(PSMDescription* pPSM) {
-    return peptidePsmMap_[pPSM];
-  }
-  
-  void reset() { 
-    scores_.clear(); 
-    totalNumberOfTargets_ = 0;
-    totalNumberOfDecoys_ = 0;
-  }
-  
- protected:
-  bool usePi0_;
-  
-  double pi0_;
-  double targetDecoySizeRatio_;
-  int totalNumberOfDecoys_, totalNumberOfTargets_;
-  
-  std::vector<ScoreHolder> scores_;
-  std::map<PSMDescription*, std::vector<PSMDescription*> > peptidePsmMap_;
-  DescriptionOfCorrect doc_;
-  
-  double* decoyPtr_;
-  double* targetPtr_;
-  
-  void reorderFeatureRows(FeatureMemoryPool& featurePool, bool isTarget,
-    std::map<double*, double*>& movedAddresses, size_t& idx);
-  void getScoreLabelPairs(std::vector<pair<double, bool> >& combined);
-  void checkSeparationAndSetPi0();
+
+public:
+	// @param usePi0 use mix-max
+	Scores(bool usePi0) : usePi0_(usePi0), pi0_(1.0),
+		targetDecoySizeRatio_(1.0), totalNumberOfDecoys_(0),
+		totalNumberOfTargets_(0), decoyPtr_(NULL), targetPtr_(NULL) {}
+	~Scores() {}
+	void merge(vector<Scores>& sv, double fdr);
+	void postMergeStep();
+
+	std::vector<ScoreHolder>::iterator begin() { return scores_.begin(); }
+	std::vector<ScoreHolder>::iterator end() { return scores_.end(); }
+
+	double calcScore(const double* features, const std::vector<double>& w) const;
+	void scoreAndAddPSM(ScoreHolder& sh, const std::vector<double>& rawWeights,
+		FeatureMemoryPool& featurePool);
+	int calcScores(vector<double>& w, double fdr, bool skipDecoysPlusOne = false);
+	int calcQ(double fdr, bool skipDecoysPlusOne = false);
+	void recalculateDescriptionOfCorrect(const double fdr);
+	void calcPep();
+
+	void fillFeatures(SetHandler& setHandler);
+
+	int getInitDirection(const double initialSelectionFdr, std::vector<double>& direction);
+	void createXvalSetsBySpectrum(std::vector<Scores>& train,
+		std::vector<Scores>& test, const unsigned int xval_fold,
+		FeatureMemoryPool& featurePool);
+
+	void generatePositiveTrainingSet(AlgIn& data, const double fdr,
+		const double cpos, const bool trainBestPositive);
+	void generateNegativeTrainingSet(AlgIn& data, const double cneg);
+
+	void recalculateSizes();
+	void normalizeScores(double fdr);
+
+	void weedOutRedundant();
+
+	void weedOutRedundant(std::map<std::string, unsigned int>& peptideSpecCounts,
+		double specCountQvalThreshold);
+
+	void weedOutRedundantTDC();
+
+	void weedOutRedundantMixMax();
+
+	void printRetentionTime(ostream& outs, double fdr);
+	unsigned getQvaluesBelowLevel(double level);
+
+	void setDOCFeatures(Normalizer* pNorm);
+
+	void print(int label, std::ostream& os = std::cout);
+
+	DescriptionOfCorrect& getDOC() { return doc_; }
+
+	inline double getPi0() const { return pi0_; }
+
+	inline double getTargetDecoySizeRatio() const {
+		return targetDecoySizeRatio_;
+	}
+	inline unsigned int size() const {
+		return totalNumberOfTargets_ + totalNumberOfDecoys_;
+	}
+	inline unsigned int posSize() const { return totalNumberOfTargets_; }
+	inline unsigned int negSize() const { return totalNumberOfDecoys_; }
+
+	inline void addScoreHolder(const ScoreHolder& sh) {
+		scores_.push_back(sh);
+	}
+
+	std::vector<PSMDescription*>& getPsms(PSMDescription* pPSM) {
+		return peptidePsmMap_[pPSM];
+	}
+
+	void reset() {
+		scores_.clear();
+		totalNumberOfTargets_ = 0;
+		totalNumberOfDecoys_ = 0;
+	}
+
+protected:
+	bool usePi0_;
+	// pi0，预估结果中 target PSM 中正确的比例
+	double pi0_;
+	// target/decoy PSM 数目比例
+	double targetDecoySizeRatio_;
+	// decoy PSM 数目
+	int totalNumberOfDecoys_;
+	// target PSM 数目
+	int totalNumberOfTargets_;
+
+	// 保存所有数据
+	std::vector<ScoreHolder> scores_;
+	std::map<PSMDescription*, std::vector<PSMDescription*> > peptidePsmMap_;
+	DescriptionOfCorrect doc_;
+
+	double* decoyPtr_;
+	double* targetPtr_;
+
+	void reorderFeatureRows(FeatureMemoryPool& featurePool, bool isTarget,
+		std::map<double*, double*>& movedAddresses, size_t& idx);
+	void getScoreLabelPairs(std::vector<pair<double, bool> >& combined);
+	void checkSeparationAndSetPi0();
 };
 
 #endif /*SCORES_H_*/
